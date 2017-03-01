@@ -10,19 +10,20 @@ int main(int argc, char* argv[])
 {
 
   // Cheking the Arguments
-  if( argc != 3){
+  if( argc != 5){
     std::cout << "Error: Wrong number of Arguments" << std::endl;
     return -1;
   }
 
   std::string method = argv[2];
+  std::string param = argv[3];
+  std::string number = argv[4];
   std::cout << "Method to use: "<< method << std::endl;
 
   /****************************************************************************/
   /******************** STEP 1 : Initialize variables *************************/
   /****************************************************************************/
   const int maturityCount = 9;
-
   const int seriesCount = 12;
 
   // Define time to maturity
@@ -63,23 +64,38 @@ int main(int argc, char* argv[])
   // main DE function which is called runDE implments the DE algorithm and
   // calculates the Error for each time-serie we have
 
-  // define the Differential Evolution object
-  int NP;
-  double F,CR;
-  if (method == "cir")
-  {
-    NP = 55;
-    CR = 0.6;
-    F = 0.5;
-  }
-  else
-  {
-    NP = 70;
-    CR = 0.85;
-    F = 0.6;
-  }
+    // define the Differential Evolution object
+    std::string dataFileName = "../Data/" + method + param + number + ".csv";
+    std::ofstream dataFile (dataFileName);
+    dataFile << "Error;\n";
 
-  DE d(method,NP,F,CR,80);
+  int maxIter = 70; //Best Choice
+  double F;// = 0.6;
+  double CR;
+  if(param == "F")  CR = 0.85;
+  else              F = 0.6;
+
+  int NP = 75;  //Best Choice
+  // int j = 50;
+  // for(int i = 5; i<=100; i+=5)
+  // {
+  //   if (i>100)
+  //   {
+  //     NP = 100 + j;
+  //     j+=50;
+  //   }
+  //   else  NP = i;
+  //   if (NP>500) break;
+
+ double imax;
+ if(param == "F")  imax = 1.25;
+ else              imax = 1.05;
+ for(double i = 0.05 ;i<imax; i+=0.05)
+  {
+    if(param == "F")  F = i;
+    else              CR = i;
+  // CR = i;
+  DE d(method,NP,F,CR,maxIter);
 
 
   double newR = r0;
@@ -91,6 +107,9 @@ int main(int argc, char* argv[])
   // for each time-serie
   for(int i = 0; i < seriesCount; i++)
   {
+    if(param == "F")  std::cout << "values for F = "<< F << std::endl;
+    else              std::cout << "values for CR = "<< CR << std::endl;
+    // std::cout << "values for CR = "<< CR << std::endl;
     crrntMonthMrktData = mrktData[seriesCount-1-i];
     std::cout << "=============================" << std::endl;
     std::cout << "Running DE for series number:" << i+1 << std::endl;
@@ -100,9 +119,6 @@ int main(int argc, char* argv[])
     betaArray[i] = d.getBeta();
     sigmaArray[i] = d.getSigma();
     errorArray[i] = d.getError();
-    mdlData[i] = d.getMdlArray();
-    iterArray[i] = d.getIter();
-    timeArray[i] = d.getTime();
   }
 
   auto end = std::chrono::steady_clock::now();
@@ -113,26 +129,22 @@ int main(int argc, char* argv[])
 	/*************************** STEP 4 : Print Out *****************************/
 	/****************************************************************************/
 
+  double avg = 0.0;
   for(int i = 0; i < seriesCount; i++)
   {
-    std::cout << "\nfinal alpha:" <<  alphaArray[i] <<std::endl;
-    std::cout << "final beta:" << betaArray[i] <<std::endl;
-    std::cout << "final sigma:" << sigmaArray[i] <<std::endl;
-    std::cout << "Average Error for month :" << i;
-    std::cout << "\t is : " << errorArray[i] << std::endl;
-    std::cout << "Elapsed Time: " << timeArray[i] << std::endl;
-    std::cout << "Number of Iterations: " << iterArray[i] << std::endl;
-    for (size_t j = 0; j < 9; j++) {
-      std::cout << "y for maturity: "  << tau[j] << "\t is: \t" << mdlData[i][j] << std::endl;
-    }
+    avg+=errorArray[i];
   }
 
-  method = "Total" + method + "ParCPU" + std::to_string(seriesCount) ;
-  writeData(mdlData, mrktData, alphaArray, betaArray, sigmaArray,
-          errorArray, iterArray, timeArray,method);
+  std::cout << "average error is:" << avg/12.0 << '\n';
+  if(param == "F")  dataFile << F << ";";
+  else              dataFile << CR << ";";
+  // dataFile << CR << ";"
+  dataFile << avg/12 << ";";
+  dataFile << "\n ";
 
-    std::cout << "Data has been written to file" << std::endl;
-    std::cout << "Total Calculation Time is: " << totalTime << std::endl;
+}
+
+  dataFile.close();
 
   return 0;
 }

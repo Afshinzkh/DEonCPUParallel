@@ -16,6 +16,7 @@ int main(int argc, char* argv[])
   }
 
   std::string method = argv[2];
+
   std::cout << "Method to use: "<< method << std::endl;
 
   /****************************************************************************/
@@ -24,6 +25,7 @@ int main(int argc, char* argv[])
   const int maturityCount = 9;
 
   const int seriesCount = 12;
+
 
   // Define time to maturity
   std::array<double,maturityCount> tau = {0.25, 1, 3, 5, 7, 10, 15, 20, 30};
@@ -64,21 +66,9 @@ int main(int argc, char* argv[])
   // calculates the Error for each time-serie we have
 
   // define the Differential Evolution object
-  int NP;
-  double F,CR;
-  if (method == "cir")
-  {
-    NP = 55;
-    CR = 0.6;
-    F = 0.5;
-  }
-  else
-  {
-    NP = 70;
-    CR = 0.85;
-    F = 0.6;
-  }
-
+  int NP = 80;
+  double F = 0.7;
+  double CR = 0.5;
   DE d(method,NP,F,CR,80);
 
 
@@ -127,7 +117,7 @@ int main(int argc, char* argv[])
     }
   }
 
-  method = "Total" + method + "ParCPU" + std::to_string(seriesCount) ;
+  method = "SpeedTest" + method + "ParCPU" + std::to_string(seriesCount);
   writeData(mdlData, mrktData, alphaArray, betaArray, sigmaArray,
           errorArray, iterArray, timeArray,method);
 

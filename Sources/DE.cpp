@@ -17,9 +17,9 @@ namespace Calibration
   	//                                      CR  : Crossover Ratio [0,1]
 
 
-    const int NP = 80;
-    double F = 0.7;
-    double CR = 0.5;
+    // const int NP = 100;
+    // double F = 0.9;
+    // double CR = 0.6;
 
     // Creat a population matrix P with the size of [NP * mpCount]
     // where mpCount is the count of Model Parameters;
@@ -32,7 +32,7 @@ namespace Calibration
     // Define the Random Generator here
     // to get random values for model Parameters e.g. alpha, beta, sigma
     // Upper and Lower bounds for them are also defined here
-    std::array<double, 3> upperBound = {0.25, 0.05, 0.005};
+    std::array<double, 3> upperBound = {0.25, 0.05 , 0.005};
     std::array<double, 3> lowerBound = {0.0, 0.00001, 0.00001};
 
     // Define the Random Device
@@ -59,7 +59,7 @@ namespace Calibration
     double tol = 0.00000001;
     avgError = 1.0;
     double lastAvgError = 2.0;
-    int maxIter = 50;
+    // int maxIter = 80;
     int iter = 0;
     loopCount = 0;
 
@@ -108,6 +108,7 @@ namespace Calibration
         std::cout << "Average Error for Calculation loop :" << loopCount;
         std::cout << "\t is : " << avgError << std::endl;
         if(std::abs(avgError -lastAvgError) < tol)    break;
+
         lastAvgError = avgError;
 
   /****************************************************************************/
@@ -213,8 +214,8 @@ namespace Calibration
     }// end of while loop
 
     double finError = pError[0];
-    int smallestIndex;
-    #pragma omp parallel for private(smallestIndex, finError)
+    int smallestIndex = 0;
+    // #pragma omp parallel for private(smallestIndex, finError)
       for(int i = 1; i < NP; i++)
       {
         if(pError[i]<finError)
@@ -224,6 +225,7 @@ namespace Calibration
         }
       }
     std::cout << "Smallest Error is: " << finError <<'\n';
+    std::cout << "Smallest index: " << smallestIndex <<'\n';
     alpha = P[smallestIndex][0];
     beta = P[smallestIndex][1];
     sigma = P[smallestIndex][2];
@@ -270,9 +272,13 @@ namespace Calibration
 /******************** Setters and Getters are here **************************/
 /****************************************************************************/
 
-  DE::DE(std::string m)
+  DE::DE(std::string m, const int np, double f, double cr, int maxiter)
   {
     methodName = m;
+    NP = np;
+    F = f;
+    CR = cr;
+    maxIter = maxiter;
   }
 
   const double& DE::getAlpha() const { return alpha; }

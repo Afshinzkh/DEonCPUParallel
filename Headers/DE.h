@@ -14,7 +14,7 @@ namespace Calibration {
   class  DE{
     public:
       double runDE(double newR);
-      DE(std::string m);
+      DE(std::string m, const int np, double f, double cr, int maxiter);
       const double& getAlpha() const;
       const double& getBeta() const;
       const double& getSigma() const;
@@ -26,6 +26,8 @@ namespace Calibration {
 
     private:
       std::string methodName;
+      int NP, maxIter;
+      double F, CR;
       double alpha, beta, sigma, avgError;
       int loopCount;
       double calTime;
