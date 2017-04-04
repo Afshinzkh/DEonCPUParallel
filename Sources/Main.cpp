@@ -79,7 +79,7 @@ int main(int argc, char* argv[])
     F = 0.6;
   }
 
-  DE d(method,NP,F,CR,80);
+  DE d(method,NP,F,CR,100);
 
 
   double newR = r0;
@@ -127,7 +127,7 @@ int main(int argc, char* argv[])
     }
   }
 
-  method = "Total" + method + "ParCPU" + std::to_string(seriesCount) ;
+  method = method + "ParCPU" + std::to_string(seriesCount) ;
   writeData(mdlData, mrktData, alphaArray, betaArray, sigmaArray,
           errorArray, iterArray, timeArray,method);
 

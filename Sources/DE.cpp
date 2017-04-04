@@ -32,7 +32,7 @@ namespace Calibration
     // Define the Random Generator here
     // to get random values for model Parameters e.g. alpha, beta, sigma
     // Upper and Lower bounds for them are also defined here
-    std::array<double, 3> upperBound = {0.25, 0.05 , 0.005};
+    std::array<double, 3> upperBound = {1, 0.1 , 0.01};
     std::array<double, 3> lowerBound = {0.0, 0.00001, 0.00001};
 
     // Define the Random Device
