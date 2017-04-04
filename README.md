@@ -16,8 +16,14 @@ We have two different Financial Models, the Vasicek and the CIR model. In this w
 * openMP
 
 ## How to Compile and run
-* Compile with: 	g++ -std=c++11 -fopenmp -o solver Main.cpp Vasicek.cpp CIR.cpp
-* run     with:		./solver data12.csv vasicek (or cir)
+* Compile with: 	
+```
+g++ -std=c++11 -fopenmp -o solver Main.cpp Vasicek.cpp CIR.cpp
+```
+* run     with:	
+```
+./solver data12.csv vasicek (or cir)
+```
 
 ## Complete Thesis Paper
 Can be found in the folder Documentation
